@@ -261,7 +261,8 @@ if __name__ == '__main__':
     def predict():
         global endpoints
         # payload = request.get_json(force=True)
-        payload = json.loads("""{"user_id": "u-42", "events": [ { "ts": "2025-07-08T14:12:03Z","endpoint": "GET /invoices", "params": {} }, { "ts": "2025-07-08T14:13:11Z", "endpoint": "PUT /invoices/123/status", "params": {"status": "DRAFT" } }, { "ts": "2025-07-08T15:13:11Z", "endpoint": "POST /v1/invoices", "params": {} } ], "prompt": "Let's finish billing for Q2", "spec_url":"https://raw.githubusercontent.com/stripe/openapi/refs/heads/master/openapi/spec3.yaml","k": 5}""")
+        # payload = json.loads("""{"user_id": "u-42", "events": [ { "ts": "2025-07-08T14:12:03Z","endpoint": "GET /invoices", "params": {} }, { "ts": "2025-07-08T14:13:11Z", "endpoint": "PUT /invoices/123/status", "params": {"status": "DRAFT" } }, { "ts": "2025-07-08T15:13:11Z", "endpoint": "POST /v1/invoices", "params": {} } ], "prompt": "Let's finish billing for Q2", "spec_url":"https://raw.githubusercontent.com/stripe/openapi/refs/heads/master/openapi/spec3.yaml","k": 5}""")
+        payload = request.get_json(force=True)
 
         # ---- Parse components ----
         user_id = payload["user_id"]
@@ -301,7 +302,10 @@ if __name__ == '__main__':
         # - score/rank with ML
         # - build a prediction response
 
-        return jsonify({"predictions":[{"endpoint":c['endpoint'], "params":"{...}", "score": c['score'], "why":c['reason']} for c in resp]})
+        return jsonify({"predictions":[{"endpoint":c['endpoint'], "params":"{...}", "score": str(c['score']), "why":c['reason']} for c in resp]})
     
+    # @app.route('/feedback', methods=['POST'])
+    # def predict():
+
     app.run(host='0.0.0.0', port=5000, debug=True)
     # predict()
