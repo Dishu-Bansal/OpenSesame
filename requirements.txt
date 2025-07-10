@@ -1,0 +1,12 @@
+joblib
+flask
+waitress
+requests
+Pyyaml
+sentence_transformers
+google-genai
+pandas
+numpy
+lightgbm
+scikit-learn
+redis

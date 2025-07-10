@@ -1,0 +1,98 @@
+sequence,prompt,llm_intent,predicted_next_call,is_correct
+"['GET /v1/customers', 'POST /v1/customers']","create a customer","User intends to manage customer data","GET /v1/customers/{id}",1
+"['GET /v1/customers', 'POST /v1/customers', 'GET /v1/customers/{id}']","create a payment","User intends to process a payment","POST /v1/charges",1
+"['POST /v1/customers', 'GET /v1/customers/{id}', 'POST /v1/charges']","","User intends to process a payment","GET /v1/charges/{id}",1
+"['GET /v1/charges']","list charges","User intends to browse payment data","GET /v1/charges/{id}",1
+"['GET /v1/charges', 'GET /v1/charges/{id}']","refund a charge","User intends to refund a payment","POST /v1/refunds",1
+"['GET /repos', 'GET /repos/{owner}/issues']","list issues","User intends to browse repository issues","POST /repos/{owner}/issues",1
+"['GET /repos', 'POST /repos/{owner}/issues']","open an issue","User intends to create an issue","GET /repos/{owner}/issues/{id}",1
+"['GET /repos', 'POST /repos/{owner}/pulls']","","User intends to create a pull request","GET /repos/{owner}/pulls/{id}",1
+"['GET /users', 'GET /meetings']","list meetings","User intends to browse meetings","POST /meetings",1
+"['GET /users', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /meetings/{id}",1
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","","User intends to verify a meeting","PATCH /meetings/{id}",1
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/charges/{id}",1
+"['GET /repos', 'GET /repos/{owner}/issues']","list issues","User intends to browse issues","POST /repos/{owner}/issues",1
+"['GET /users', 'GET /events']","list events","User intends to browse events","POST /events",1
+"['GET /v1/customers', 'POST /v1/customers']","","User intends to manage customer data","GET /v1/customers/{id}",1
+"['GET /repos']","list repositories","User intends to browse repositories","GET /repos/{owner}/issues",1
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","PATCH /meetings/{id}",1
+"['GET /repos', 'GET /repos/{owner}/pulls']","","User intends to browse pull requests","POST /repos/{owner}/pulls",1
+"['GET /v1/customers']","list customers","User intends to browse customer data","POST /v1/customers",1
+"['GET /users', 'POST /events']","create an event","User intends to create an event","GET /events/{id}",1
+"['GET /repos', 'POST /repos/{owner}/issues', 'GET /repos/{owner}/issues/{id}']","","User intends to check issue status","PATCH /repos/{owner}/issues/{id}",1
+"['GET /v1/customers', 'POST /v1/customers', 'GET /v1/customers/{id}']","create a payment","User intends to process a payment","POST /v1/charges",1
+"['GET /users', 'GET /meetings', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /meetings/{id}",1
+"['GET /repos', 'GET /repos/{owner}/issues']","","User intends to browse issues","POST /repos/{owner}/issues",1
+"['GET /v1/charges']","list charges","User intends to browse charges","GET /v1/charges/{id}",1
+"['GET /users', 'POST /meetings']","","User intends to schedule a meeting","GET /meetings/{id}",1
+"['GET /repos', 'POST /repos/{owner}/pulls']","create pull request","User intends to create a pull request","GET /repos/{owner}/pulls/{id}",1
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/charges/{id}",1
+"['GET /users', 'GET /events', 'POST /events']","","User intends to create an event","GET /events/{id}",1
+"['GET /repos/{owner}/issues']","list issues","User intends to browse issues","POST /repos/{owner}/issues",1
+"['GET /v1/customers', 'GET /v1/customers/{id}']","","User intends to view customer details","POST /v1/charges",1
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","PATCH /meetings/{id}",1
+"['GET /repos', 'GET /repos/{owner}/pulls']","create pull request","User intends to create a pull request","POST /repos/{owner}/pulls",1
+"['GET /v1/charges', 'POST /v1/refunds']","refund payment","User intends to refund a payment","GET /v1/charges/{id}",0
+"['GET /users', 'GET /meetings']","","User intends to browse meetings","GET /users",0
+"['GET /repos', 'POST /repos/{owner}/issues']","open an issue","User intends to create an issue","GET /repos",0
+"['GET /v1/customers', 'POST /v1/customers']","","User intends to manage customer data","GET /v1/charges",0
+"['GET /users', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues', 'POST /repos/{owner}/issues']","create an issue","User intends to create an issue","GET /repos/{owner}/pulls",0
+"['GET /v1/charges', 'GET /v1/charges/{id}']","refund a charge","User intends to refund a payment","GET /v1/customers",0
+"['GET /users', 'GET /meetings', 'POST /meetings', 'GET /meetings/{id}']","","User intends to verify a meeting","GET /events",0
+"['GET /repos', 'POST /repos/{owner}/pulls']","","User intends to create a pull request","GET /repos",0
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/customers",0
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues']","list issues","User intends to browse issues","GET /repos/{owner}/pulls",0
+"['GET /v1/charges']","","User intends to browse charges","POST /v1/customers",0
+"['GET /users', 'POST /events']","create an event","User intends to create an event","GET /meetings",0
+"['GET /repos', 'POST /repos/{owner}/issues', 'GET /repos/{owner}/issues/{id}']","","User intends to check issue status","GET /repos",0
+"['GET /v1/customers', 'POST /v1/customers', 'GET /v1/customers/{id}']","create a payment","User intends to process a payment","GET /v1/charges",0
+"['GET /users', 'GET /meetings', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues']","","User intends to browse issues","GET /repos",0
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/customers",0
+"['GET /users', 'GET /events', 'POST /events']","create an event","User intends to create an event","GET /meetings",0
+"['GET /repos/{owner}/issues']","list issues","User intends to browse issues","GET /repos",0
+"['GET /v1/customers', 'GET /v1/customers/{id}']","","User intends to view customer details","GET /v1/charges",0
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","GET /events",0
+"['GET /repos', 'GET /repos/{owner}/pulls']","create pull request","User intends to create a pull request","GET /repos/{owner}/issues",0
+"['GET /v1/charges', 'POST /v1/refunds']","refund payment","User intends to refund a payment","GET /v1/customers",0
+"['GET /users', 'GET /meetings']","","User intends to browse meetings","GET /events",0
+"['GET /repos', 'POST /repos/{owner}/issues']","open an issue","User intends to create an issue","GET /repos/{owner}/pulls",0
+"['GET /v1/customers', 'POST /v1/customers']","","User intends to manage customer data","GET /v1/charges",0
+"['GET /users', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues', 'POST /repos/{owner}/issues']","create an issue","User intends to create an issue","GET /repos",0
+"['GET /v1/charges', 'GET /v1/charges/{id}']","refund a charge","User intends to refund a payment","GET /v1/customers",0
+"['GET /users', 'GET /meetings', 'POST /meetings', 'GET /meetings/{id}']","","User intends to verify a meeting","GET /users",0
+"['GET /repos', 'POST /repos/{owner}/pulls']","","User intends to create a pull request","GET /repos/{owner}/issues",0
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/customers",0
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","GET /events",0
+"['GET /repos', 'GET /repos/{owner}/issues']","list issues","User intends to browse issues","GET /repos/{owner}/pulls",0
+"['GET /v1/charges']","","User intends to browse charges","POST /v1/customers",0
+"['GET /users', 'POST /events']","create an event","User intends to create an event","GET /meetings",0
+"['GET /repos', 'POST /repos/{owner}/issues', 'GET /repos/{owner}/issues/{id}']","","User intends to check issue status","GET /repos",0
+"['GET /v1/customers', 'POST /v1/customers', 'GET /v1/customers/{id}']","create a payment","User intends to process a payment","GET /v1/charges",0
+"['GET /users', 'GET /meetings', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues']","","User intends to browse issues","GET /repos",0
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/customers",0
+"['GET /users', 'GET /events', 'POST /events']","create an event","User intends to create an event","GET /meetings",0
+"['GET /repos/{owner}/issues']","list issues","User intends to browse issues","GET /repos",0
+"['GET /v1/customers', 'GET /v1/customers/{id}']","","User intends to view customer details","GET /v1/charges",0
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","GET /events",0
+"['GET /repos', 'GET /repos/{owner}/pulls']","create pull request","User intends to create a pull request","GET /repos/{owner}/issues",0
+"['GET /v1/charges', 'POST /v1/refunds']","refund payment","User intends to refund a payment","GET /v1/customers",0
+"['GET /users', 'GET /meetings']","","User intends to browse meetings","GET /events",0
+"['GET /repos', 'POST /repos/{owner}/issues']","open an issue","User intends to create an issue","GET /repos/{owner}/pulls",0
+"['GET /v1/customers', 'POST /v1/customers']","","User intends to manage customer data","GET /v1/charges",0
+"['GET /users', 'POST /meetings']","schedule a meeting","User intends to schedule a meeting","GET /users",0
+"['GET /repos', 'GET /repos/{owner}/issues', 'POST /repos/{owner}/issues']","create an issue","User intends to create an issue","GET /repos",0
+"['GET /v1/charges', 'GET /v1/charges/{id}']","refund a charge","User intends to refund a payment","GET /v1/customers",0
+"['GET /users', 'GET /meetings', 'POST /meetings', 'GET /meetings/{id}']","","User intends to verify a meeting","GET /users",0
+"['GET /repos', 'POST /repos/{owner}/pulls']","","User intends to create a pull request","GET /repos/{owner}/issues",0
+"['GET /v1/customers', 'POST /v1/charges']","create a payment","User intends to process a payment","GET /v1/customers",0
+"['GET /users', 'POST /meetings', 'GET /meetings/{id}']","update meeting","User intends to update a meeting","GET /events",0
+"['GET /repos', 'GET /repos/{owner}/issues']","list issues","User intends to browse issues","GET /repos/{owner}/pulls",0
+"['GET /v1/charges']","","User intends to browse charges","POST /v1/customers",0
+"['GET /users', 'POST /events']","create an event","User intends to create an event","GET /meetings",0
+"['GET /repos', 'POST /repos/{owner}/issues', 'GET /repos/{owner}/issues/{id}']","","User intends to check issue status","GET /repos",0
+"['GET /v1/customers', 'POST /v1/customers', 'GET /v1/customers/{id}']","create a payment","User intends to process a payment","GET /v1/charges",0

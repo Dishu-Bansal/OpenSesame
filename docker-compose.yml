@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  prediction-service:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/main
+    restart: always
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    restart: always
