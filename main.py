@@ -69,14 +69,17 @@ def add_suggested_api_calls(endpoint: str, method: str, description: str, reason
     """
     if any(endpoint in e.values() for e in endpoints):
         if (method == "DELETE" or method == "PATCH") and (not force):
-            return "Desturctive method found! Please double check if User intention is correct. If it is, try again with force=True"
+            return "Not Added. Desturctive method found! Please double check if User intention is correct. If it is, try again with force=True"
         else:
+            if any((x[0], x[1]) == (method, endpoint) for x in suggestions):
+                return "Not Added. Endpoint already exists in the list"
             suggestions.append((method, endpoint, description, reason))
             return "Added successfully"
     else:
         return "Error: Endpoint not in the list. Try again."
     
 def get_candidates_using_AI(events, user_prompt, calls, k, cold_start=False):
+    global suggestions
     try:
         str_event = ""
         for e in events:
@@ -216,14 +219,13 @@ def get_candidates_using_AI(events, user_prompt, calls, k, cold_start=False):
     2) Add Exactly {k} calls! Less than K is not accepted.
     """
         # print(prompt)
-        while len(suggestions < k):
-            suggestions.clear()
+        while len(suggestions) < k:
             response = client.models.generate_content(
                             model="gemini-2.5-flash-lite-preview-06-17",
                             contents=[prompt],
                             config=types.GenerateContentConfig(tools=[add_suggested_api_calls], temperature=0.3)
                         )
-            prompt += f"\nADD EXACTLY {k} calls using the tool"
+        suggestions = suggestions[:k]
         intent = response.text
         if "User Intent:" in intent:
             intent = intent.replace("User Intent: ", "")
@@ -449,7 +451,7 @@ if __name__ == '__main__':
             feedback_schema = {
                 "type": "object",
                 "properties": {
-                    "feedback": {"type": "string", "enum": ["accept", "reject"]}
+                    "feedback": {"type": "string", "enum": ["accept", "override"]}
                 },
                 "required": ["feedback"]
             }
