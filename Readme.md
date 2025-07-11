@@ -55,7 +55,7 @@ The entire environment is containerized for easy and reproducible setup.
     This command will build the Docker images and start the Flask application and Redis services. The `training/data.csv` file is pre-populated with a few sample rows to enable the ML model to train on first startup.
 
     ```bash
-    docker compose up --build
+    docker compose up
     ```
 3. **Wait for these logs before sening a request. Note that, first time doing `docker compose up` can take a few minutes**
     ![](./image.png)
