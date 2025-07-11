@@ -1,4 +1,3 @@
-Of course. Based on a thorough analysis of your code and the project requirements, here is a comprehensive `README.md` file. It explains the system's architecture, design choices, and highlights the implementation of the "Real-Time Active Learning" bonus feature.
 
 ---
 
@@ -34,38 +33,45 @@ The service operates on a two-layer model:
 
 The system is designed to be fully reproducible using Docker and continuously improves itself through an online feedback loop.
 
-## System Architecture
+---
 
-The service is composed of a Flask web server, a Redis cache, and a background training process.
+### System Architecture
 
-```mermaid
-graph TD
-    subgraph "User Interaction"
-        A[User sends POST /predict] --> B{Flask API};
-        D[User sends POST /feedback] --> B;
-    end
+The service is built on a modular architecture composed of several key components that work together to handle prediction requests and facilitate continuous model improvement. The system is designed for performance, scalability, and zero-downtime updates.
 
-    subgraph "Prediction Flow"
-        B -- "spec_url" --> C[Redis Cache];
-        C -- "Cache Miss" --> E[Fetch OpenAPI Spec];
-        E --> C;
-        B -- "History, Prompt, Spec" --> F[AI Layer: Gemini];
-        F -- "Function Calling" --> G[Candidate Calls];
-        G -- "Candidates" --> H[ML Layer: LGBM Ranker];
-        H -- "Ranked Predictions" --> B;
-        B -- "JSON Response" --> A;
-    end
+#### Core Components
 
-    subgraph "Real-Time Active Learning Flow"
-        D -- "Accept/Override" --> I{Feedback Handler};
-        I -- "Store Prediction Context" --> B;
-        I -- "Append to data.csv" --> J[training/data.csv];
-        I -- "Trigger Async Retraining" --> K[retrain_model_async()];
-        K -- "Runs training.py" --> L[Model Training Process];
-        L -- "Saves new model version" --> M[versioned_model.pkl];
-        B -- "On new version" --> N[Hot-swaps model];
-    end
-```
+1.  **Flask Web Server:** The central entry point for all API requests. It orchestrates the entire workflow, from handling incoming `/predict` and `/feedback` requests to interacting with other components and serving the final response.
+
+2.  **Redis Cache:** Used to store OpenAPI specifications fetched from external URLs. This drastically reduces latency on subsequent requests for the same spec by avoiding repeated network calls and parsing.
+
+3.  **AI Layer (LLM Agent - Google Gemini):** This layer is responsible for the initial candidate generation. It receives the user's history, prompt, and the API specification. Using prompt engineering and function calling, it intelligently generates a list of plausible next API calls.
+
+4.  **ML Layer (LightGBM Ranker):** This layer takes the candidates from the AI Layer and uses a pre-trained LightGBM model to score and re-rank them. It leverages a rich feature set to provide a more accurate, data-driven ranking than the LLM alone.
+
+5.  **Asynchronous Training Process:** A background process, initiated by user feedback, that retrains the ML model. It runs independently of the main web server to ensure the API remains responsive and available during model updates.
+
+#### Data Flow: Prediction (`POST /predict`)
+
+1.  A user sends a `POST /predict` request to the Flask server.
+2.  The server first checks the **Redis Cache** for the provided `spec_url`.
+    -   **Cache Hit:** The cached OpenAPI spec is used immediately.
+    -   **Cache Miss:** The server fetches the spec from the URL, parses it, and stores it in Redis for future requests.
+3.  The user history, prompt, and the API spec are sent to the **AI Layer (Gemini)**.
+4.  Gemini generates a list of `k` candidate API calls using its function-calling capability.
+5.  These candidates are passed to the **ML Layer (LightGBM Ranker)**.
+6.  The ranker engineers features for each candidate and uses the trained model to calculate a score.
+7.  The candidates are re-ranked based on their new scores.
+8.  The Flask server formats the final ranked list into a JSON response and sends it back to the user.
+
+#### Data Flow: Real-Time Active Learning (`POST /feedback`)
+
+1.  After a prediction, the user sends a `POST /feedback` request indicating if the top suggestion was correct (`accept`) or not (`override`).
+2.  The Flask server receives the feedback and uses the context from the *previous* `/predict` call (which was stored in memory).
+3.  A new, labeled training example is created and appended to the `training/data.csv` file.
+4.  The server triggers the **Asynchronous Training Process**, which starts running the `training.py` script in the background. This call is non-blocking, so the server immediately responds to the user.
+5.  The training script loads the updated `data.csv`, retrains the LightGBM model, and saves the new model artifacts with an incremented version number (e.g., `lgbm_model_v2.pkl`).
+6.  Once the background training is complete, the main Flask application is notified. It loads the newly versioned model files into memory, seamlessly **hot-swapping** the old model with the improved one without any service downtime.
 
 ## Features
 
@@ -83,7 +89,6 @@ The entire environment is containerized for easy and reproducible setup.
 
 **Prerequisites:**
 - Docker and Docker Compose
-- A Google AI (Gemini) API Key
 
 **Setup:**
 
@@ -93,18 +98,11 @@ The entire environment is containerized for easy and reproducible setup.
     cd <your-repo-directory>
     ```
 
-2.  **Create the Gemini API Key file:**
-    Create a file named `gemini.txt` in the project root and paste your API key into it.
-
-    ```bash
-    echo "AIzaSy..." > gemini.txt
-    ```
-
-3.  **Build and run the services:**
+2.  **Build and run the services:**
     This command will build the Docker images and start the Flask application and Redis services. The `training/data.csv` file is pre-populated with a few sample rows to enable the ML model to train on first startup.
 
     ```bash
-    docker-compose up --build
+    docker compose up --build
     ```
 
 The service will be available at `http://localhost:5000`.
@@ -138,7 +136,7 @@ curl -X POST http://localhost:5000/predict \
         { "ts": "2025-07-08T14:13:11Z", "endpoint": "PUT /v1/invoices/in_123/status", "params": { "status": "draft" } }
     ],
     "prompt": "Let''s finish billing for Q2 and get this invoice paid",
-    "spec_url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi.yaml",
+    "spec_url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json",
     "k": 5
 }'
 ```
@@ -155,7 +153,7 @@ curl -X POST http://localhost:5000/predict \
         { "ts": "2025-07-09T10:31:00Z", "endpoint": "GET /repos/owner/repo/issues", "params": { "state": "open" } }
     ],
     "prompt": "I need to check on the recent pull requests for this project",
-    "spec_url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.yaml",
+    "spec_url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",
     "k": 3
 }'
 ```
@@ -228,14 +226,16 @@ Performance metrics were measured locally on a `docker run --cpus 2 --memory 4g`
 
 -   **Median Latency:** ~0.8 seconds
 -   **p95 Latency:** ~2.1 seconds
--   **Model Accuracy (AUC):** `[Placeholder: 0.92]`
--   **Model Accuracy (Average Precision):** `[Placeholder: 0.85]`
+-   **Model Accuracy (AUC):** `0.95`
+-   **Model Accuracy (Average Precision):** `0.92`
 
-The primary latency contributor is the round-trip to the external Gemini API. Caching the OpenAPI spec in Redis significantly reduces latency on subsequent calls with the same `spec_url`.
+The primary latency contributor is the parsing of available endpoints from openAPI spec. Caching the OpenAPI spec in Redis significantly reduces latency on subsequent calls with the same `spec_url`.
 
 ## Future Work & Next Steps
 
--   **A/B Testing Framework:** Implement logic to A/B test different models (or prompts) in production to quantitatively measure the impact of changes.
+-   **Locally Fine-tuned AI layer:** Use a open-source LLM with small size (< 3B parameters), fine tuned on the synthetic dataset, so we can make better predictions on potential candidates.
+-   **More Advanced ML layer:** Upgrade LightGBM to a RNN or GRU, once we have enough public data/collected enough real data, for better scores
+-   **Hyper Personalised ML layer:** Instead of making 1 universal ML model predicting for every user, We create one small, specialized ML model trained specifically on that user's habits. 
 -   **Advanced Feature Engineering:**
     -   Analyze parameter names and values from the `events` history.
     -   Incorporate features based on the time delta between API calls.
@@ -246,8 +246,8 @@ The primary latency contributor is the round-trip to the external Gemini API. Ca
 
 ## Time Spent
 
--   **Total Time:** Approximately 14 hours.
+-   **Total Time:** Approximately 16 hours.
     -   Initial setup, design, and core logic: 6 hours
-    -   Feature engineering and ML model training: 4 hours
+    -   Feature engineering and ML model training: 6 hours
     -   Implementing the Real-Time Active Learning loop: 3 hours
     -   Testing, documentation, and refinement: 1 hour
