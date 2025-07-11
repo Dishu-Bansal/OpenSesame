@@ -333,7 +333,7 @@ async def retrain_model_async():
         print(f"Retraining failed: {str(e)}")
         raise
 
-def get_endpoints(spec_url):
+def get_endpoints(spec_url, r):
     cached = r.get(spec_url)
     if cached:
         endpoint_list = json.loads(cached)
@@ -350,8 +350,8 @@ previous = {}
 if __name__ == '__main__':
     app = Flask(__name__)
     r = redis.Redis(host='redis', port=6379, db=0)
-    get_endpoints(github)
-    get_endpoints(stripe)
+    get_endpoints(github, r)
+    get_endpoints(stripe, r)
 
     @app.route('/predict', methods=['POST'])
     def predict():
@@ -423,7 +423,7 @@ if __name__ == '__main__':
 
         # Validate spec_url accessibility
         try:
-            endpoints = get_endpoints(spec_url)
+            endpoints = get_endpoints(spec_url, r)
         except requests.RequestException as re:
             print(f"Failed to fetch OpenAPI spec from {spec_url}: {str(re)}")
             return jsonify({"error": f"Failed to fetch OpenAPI spec: {str(re)}"}), 400
