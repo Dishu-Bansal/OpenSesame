@@ -19,6 +19,8 @@ loaded_one_hot_encoder = joblib.load('one_hot_encoder.pkl')
 loaded_score_rescaler = joblib.load('score_rescaler.pkl')
 global_feature_columns = joblib.load('calls_list.joblib')
 current_version = 0
+github = "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json"
+stripe = "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json"
 
 def load_openapi_spec(url):
     try:
@@ -221,7 +223,7 @@ def get_candidates_using_AI(events, user_prompt, calls, k, cold_start=False):
         # print(prompt)
         while len(suggestions) < k:
             response = client.models.generate_content(
-                            model="gemini-2.5-flash-lite-preview-06-17",
+                            model="gemini-2.0-flash",
                             contents=[prompt],
                             config=types.GenerateContentConfig(tools=[add_suggested_api_calls], temperature=0.3)
                         )
@@ -331,10 +333,25 @@ async def retrain_model_async():
         print(f"Retraining failed: {str(e)}")
         raise
 
+def get_endpoints(spec_url):
+    cached = r.get(spec_url)
+    if cached:
+        endpoint_list = json.loads(cached)
+        return endpoint_list
+    else:
+        response = requests.get(spec_url, timeout=10)
+        response.raise_for_status()
+        spec = load_openapi_spec(spec_url)
+        endpoint_list = extract_flat_endpoints(spec)
+        r.set(spec_url, json.dumps(endpoint_list))  # Cache for 1 hour
+        return endpoint_list
+
 previous = {}
 if __name__ == '__main__':
     app = Flask(__name__)
     r = redis.Redis(host='redis', port=6379, db=0)
+    get_endpoints(github)
+    get_endpoints(stripe)
 
     @app.route('/predict', methods=['POST'])
     def predict():
@@ -406,15 +423,7 @@ if __name__ == '__main__':
 
         # Validate spec_url accessibility
         try:
-            cached = r.get(spec_url)
-            if cached:
-                endpoints = json.loads(cached)
-            else:
-                response = requests.get(spec_url, timeout=10)
-                response.raise_for_status()
-                spec = load_openapi_spec(spec_url)
-                endpoints = extract_flat_endpoints(spec)
-                r.setex(spec_url, 3600, json.dumps(endpoints))  # Cache for 1 hour
+            endpoints = get_endpoints(spec_url)
         except requests.RequestException as re:
             print(f"Failed to fetch OpenAPI spec from {spec_url}: {str(re)}")
             return jsonify({"error": f"Failed to fetch OpenAPI spec: {str(re)}"}), 400
