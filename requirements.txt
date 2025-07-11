@@ -10,3 +10,4 @@ numpy
 lightgbm
 scikit-learn
 redis
+jsonschema
