@@ -35,8 +35,8 @@ These are the core assumptions made during development, framed as answers to que
 Every engineering project involves trade-offs. The following were made to balance performance, complexity, and development speed.
 
 #### **AI Layer: Gemini Flash vs. Gemini Pro**
-*   **Choice:** `gemini-1.5-flash` was used for candidate generation.
-*   **Trade-off:** We traded the potentially higher reasoning capability of a model like Gemini 1.5 Pro for the significantly lower latency and cost of Gemini 1.5 Flash. For the task of identifying plausible API calls from a spec, Flash provides sufficient quality while being crucial for meeting the sub-second median performance requirement.
+*   **Choice:** `gemini-2.0-flash` was used for candidate generation.
+*   **Trade-off:** We traded the potentially higher reasoning capability of a model like Gemini 2.5 Pro for the significantly lower latency and cost of Gemini 2.0 Flash. For the task of identifying plausible API calls from a spec, Flash provides sufficient quality while being crucial for meeting the sub-second median performance requirement.
 
 #### **AI Layer: Hosted (Gemini) vs. Open Source (e.g., Llama 3)**
 *   **Choice:** A hosted API (Google Gemini).
@@ -49,6 +49,12 @@ Every engineering project involves trade-offs. The following were made to balanc
 #### **Feature Engineering: Pragmatic vs. Exhaustive**
 *   **Choice:** A pragmatic set of high-impact features was engineered.
 *   **Trade-off:** We prioritized features with the highest expected signal (text embeddings, history statistics, cosine similarities) to keep the model lightweight and inference fast. This was a conscious decision made in light of limited compute power and the need for a fast training cycle. More complex features (e.g., analyzing parameter keys/values, time-delta between calls) were deferred in favor of a performant core model.
+
+#### API Key Management: Included Key vs. Environment Variables
+
+*   **Choice:** A pre-configured, restricted API key is included directly in the code.
+*   **Trade-off:** We traded the standard security best practice of using environment variables for the significant benefit of a **frictionless, zero-configuration setup for the reviewer**.
+*   **Justification:** The primary goal for this challenge is to deliver a self-contained service that is easy to evaluate. Requiring a reviewer to sign up for an API key, create a project, enable billing (even for a free tier), and configure environment variables adds significant friction and time to the review process. By providing a safe, pre-configured key, the project can be run with a single `docker-compose up` command. This decision was deemed appropriate given that the key is heavily restricted, rate-limited, and has no associated costs, mitigating any potential security risks for the specific context of this challenge. As stated in the README, this approach would **not** be used in a production system.
 
 ## 3. Future Work & Potential Improvements
 

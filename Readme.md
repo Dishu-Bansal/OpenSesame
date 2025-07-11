@@ -108,6 +108,17 @@ The entire environment is containerized for easy and reproducible setup.
 
 The service will be available at `http://localhost:5000`.
 
+> #### **Important Note on the API Key**
+>
+> For a seamless, zero-configuration setup, **a hardcoded Google AI API key is intentionally included in the code**. This is a conscious design choice made specifically for this take-home challenge, not a security oversight.
+>
+> The key has been secured with the following strict limitations to ensure it poses no risk:
+> -   **Highly Restricted**: The key is configured to only allow calls to the `gemini-2.0-flash` model and nothing else.
+> -   **Strict Rate Limiting**: It has a very low requests-per-minute limit to prevent any possibility of abuse.
+> -   **No Billing Attached**: The key is not associated with any billing account, so no costs can be incurred.
+>
+> This approach guarantees that the project can be reviewed and tested "out-of-the-box" without requiring the reviewer to generate and configure their own API key. In a production environment, this key would be managed securely using environment variables and a secrets management service (like AWS Secrets Manager or HashiCorp Vault).
+
 ## API Endpoints & Usage
 
 ### 1. Predict Next API Call
