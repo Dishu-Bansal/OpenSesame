@@ -9,9 +9,9 @@ This project successfully implements the core requirements of the challenge, inc
 
 ## Table of Contents
 - [Project Overview](#project-overview)
+- [Quick Start](#quick-start)
 - [System Architecture](#system-architecture)
 - [Features](#features)
-- [Quick Start](#quick-start)
 - [API Endpoints & Usage](#api-endpoints--usage)
   - [1. Predict Next API Call](#1-predict-next-api-call)
   - [2. Provide Feedback & Trigger Retraining](#2-provide-feedback--trigger-retraining)
@@ -33,6 +33,34 @@ The service operates on a two-layer model:
 2.  **ML Layer (LightGBM Ranker):** A lightweight, gradient-boosted model (LightGBM) scores and re-ranks the candidates from the AI layer. It uses a rich set of features engineered from the input data to determine the most likely next call with high precision.
 
 The system is designed to be fully reproducible using Docker and continuously improves itself through an online feedback loop.
+
+---
+
+## Quick Start
+
+The entire environment is containerized for easy and reproducible setup.
+
+**Prerequisites:**
+- Docker and Docker Compose
+
+**Setup:**
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Dishu-Bansal/OpenSesame.git
+    cd OpenSesame
+    ```
+
+2.  **Build and run the services:**
+    This command will build the Docker images and start the Flask application and Redis services. The `training/data.csv` file is pre-populated with a few sample rows to enable the ML model to train on first startup.
+
+    ```bash
+    docker compose up --build
+    ```
+3. **Wait for these logs before sening a request. Note that, first time doing `docker compose up` can take a few minutes**
+    ![](./image.png)
+    
+The service will be available at `http://localhost:5000`.
 
 ---
 
@@ -83,32 +111,6 @@ The service is built on a modular architecture composed of several key component
 -   **Cold-Start Heuristic:** Provides sensible predictions for new users with limited history.
 -   **Guardrails:** The LLM prompt is designed to avoid suggesting destructive actions (e.g., `DELETE`, `PATCH`) unless the user's intent is explicit.
 -   **⭐ Real-Time Active Learning:** Captures user feedback to retrain and deploy an improved ranking model automatically, without service interruption.
-
-## Quick Start
-
-The entire environment is containerized for easy and reproducible setup.
-
-**Prerequisites:**
-- Docker and Docker Compose
-
-**Setup:**
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Dishu-Bansal/OpenSesame.git
-    cd OpenSesame
-    ```
-
-2.  **Build and run the services:**
-    This command will build the Docker images and start the Flask application and Redis services. The `training/data.csv` file is pre-populated with a few sample rows to enable the ML model to train on first startup.
-
-    ```bash
-    docker compose up --build
-    ```
-3. **Wait for these logs before sening a request. Note that, first time doing `docker compose up` can take a few minutes**
-    ![](./image.png)
-    
-The service will be available at `http://localhost:5000`.
 
 > #### **Important Note on the API Key**
 >
