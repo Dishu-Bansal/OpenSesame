@@ -105,7 +105,9 @@ The entire environment is containerized for easy and reproducible setup.
     ```bash
     docker compose up --build
     ```
-
+3. **Wait for these logs before sening a request. Note that, first time doing `docker compose up` can take a few minutes**
+    ![](./image.png)
+    
 The service will be available at `http://localhost:5000`.
 
 > #### **Important Note on the API Key**
